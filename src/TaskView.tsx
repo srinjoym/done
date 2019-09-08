@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
 import {Task} from './Types'
 import * as moment from 'moment';
-const storage = require('electron-json-storage')
+import { List, Avatar, Input } from 'antd';
+
+const { Search } = Input;
+const Store = require('electron-store');
+const store = new Store();
 
 type TaskState = {
   tasks: Task[],
@@ -12,7 +16,7 @@ class TaskView extends Component<{}, TaskState> {
 
   componentWillMount(){
     this.setState({
-      tasks: storage.get('tasks') || [],
+      tasks: store.get('done.tasks') || [],
       newTaskTitle: ""
     })
     this.handleChange = this.handleChange.bind(this)
@@ -20,7 +24,7 @@ class TaskView extends Component<{}, TaskState> {
   }
 
   componentWillUnmount(){
-    storage.set('tasks', this.state.tasks)
+    store.set('done.tasks', this.state.tasks)
   }
 
   handleChange(e: React.FormEvent) {
@@ -29,10 +33,12 @@ class TaskView extends Component<{}, TaskState> {
   }
 
   addTask(){
+    console.log("adding")
     const tasks = this.state.tasks
     tasks.push({
       title: this.state.newTaskTitle,
-      duration: moment.duration(25, 'minutes'),
+      initialDuration: moment.duration(25, 'minutes'),
+      currentDuration: moment.duration(25, 'minutes'),
       description: ""
     })
 
@@ -44,19 +50,26 @@ class TaskView extends Component<{}, TaskState> {
   render () {
     return (
       <div>
-        <div className="input-group mt-4">
-          <input value={this.state.newTaskTitle} onChange={this.handleChange} type="text" className="form-control" placeholder="Let's get started..." aria-label="Task name" aria-describedby="button-addon4"/>
+        <Search
+          value={this.state.newTaskTitle}
+          placeholder="Let's get started..."
+          onChange={this.handleChange}
+          style={{ width: 200 }}
+          enterButton="Add"
+          onPressEnter={this.addTask}
+        />
 
-          <div className="input-group-append" id="button-addon4">
-            <button onClick={this.addTask} className="btn btn-outline-secondary" type="button">Add</button>
-          </div>
-        </div>
-
-        <ul className="list-group">
-          {this.state.tasks.map((task, _) => (
-            <li className="list-group-item">{task.title}</li>
-          ))}
-        </ul>
+        <List
+          itemLayout="horizontal"
+          dataSource={this.state.tasks}
+          renderItem={task => (
+            <List.Item>
+              <List.Item.Meta
+                title={task.title}
+              />
+            </List.Item>
+          )}
+        />
       </div>
     );
   }

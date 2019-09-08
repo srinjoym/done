@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
 import {Task} from './Types';
-import Circle from 'react-circle';
+import { Progress } from 'antd';
+
 import * as moment from 'moment';
-const storage = require('electron-json-storage')
+
+const Store = require('electron-store');
+const store = new Store();
 
 type TimerState = {
   tasks: Task[],
@@ -15,7 +18,7 @@ class Timer extends Component<{}, TimerState> {
 
   componentWillMount () {
     this.setState({
-      tasks: storage.get('tasks'),
+      tasks: [],
       initialTime: moment.duration(1, 'minute'),
       currentTime: moment.duration(1, 'minute'),
       isCountingDown: true
@@ -24,8 +27,6 @@ class Timer extends Component<{}, TimerState> {
 
   componentDidMount () {
     setInterval(() => {
-      console.log(this.state.currentTime.seconds())
-      console.log(this.state.initialTime.seconds())
       if (this.state.isCountingDown && this.state.currentTime.seconds() >= 0) {
         this.setState({
           currentTime: this.state.currentTime.subtract(1, 'second'),
@@ -35,19 +36,13 @@ class Timer extends Component<{}, TimerState> {
   }
 
   progressPercentage ():number {
-    return Math.round(this.state.currentTime.seconds()/this.state.initialTime.asSeconds())*100
+    return (this.state.currentTime.seconds()/this.state.initialTime.asSeconds())*100
   }
 
   render () {
     return (
       <div>
-        <Circle progress={this.progressPercentage()} />
-
-        <ul className="list-group">
-          {this.state.tasks.map((task, _) => (
-            <li className="list-group-item">{task.title}</li>
-          ))}
-        </ul>
+        <Progress type="circle" percent={this.progressPercentage()} />
       </div>
     );
   }
