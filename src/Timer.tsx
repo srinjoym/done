@@ -41,8 +41,8 @@ class Timer extends Component<{}, TimerState> {
 
   render () {
     return (
-      <div>
-        <Progress type="circle" percent={this.progressPercentage()} />
+      <div className="timer">
+        <h1>{moment.utc(this.state.currentTime.asMilliseconds()).format("HH:mm:ss")}</h1>
       </div>
     );
   }
