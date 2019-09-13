@@ -1,12 +1,12 @@
 import React from 'react';
-import TaskView from './TaskView';
-import Timer from './Timer';
 
 import { ThemeProvider } from 'emotion-theming';
 import preset from '@rebass/preset';
 import {Box} from 'rebass'
 
+import TaskView from './TaskView';
 import './App.scss';
+import TimerView from './TimerView';
 
 
 const theme = {
@@ -22,8 +22,6 @@ const theme = {
   // }
 }
 
-
-
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -34,7 +32,7 @@ const App = () => {
           mx: 'auto',
           px: 3,
         }}>
-        <Timer/>
+        <TimerView/>
         <TaskView/>
       </Box>
     </ThemeProvider>
