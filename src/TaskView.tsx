@@ -8,14 +8,12 @@ import {addTask, updateTasks} from './store/task/actions'
 import {TaskState, Task} from './store/task/types'
 
 import { Input, } from '@rebass/forms';
-import {Card, Heading, Button } from 'rebass'
+import { Card, Text } from 'rebass'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvidedDraggableProps } from "react-beautiful-dnd";
 
 const { Search } = Input;
 const Store = require('electron-store');
 const store = new Store();
-
-const grid = 8;
 
 interface TaskViewProps {
   updateTasks: typeof updateTasks;
@@ -39,8 +37,7 @@ const reorder = (list: Task[], startIndex:number, endIndex:number) => {
 const getItemStyle = (isDragging: boolean, draggableStyle: DraggableProvidedDraggableProps):CSSProperties => ({
   // some basic styles to make the items look a bit nicer
   userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
+  // margin: `0 0 ${grid}px 0`,
 
   // change background colour if dragging
   // background: isDragging ? "lightgreen" : "grey",
@@ -51,7 +48,7 @@ const getItemStyle = (isDragging: boolean, draggableStyle: DraggableProvidedDrag
 
 const getListStyle = (isDraggingOver:boolean) => ({
   // background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: grid,
+  // padding: 8,
   width: 250
 });
 
@@ -97,6 +94,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
       }
 
       this.props.addTask(newTask)
+      this.setState({newTaskTitle: ""})
     }
   }
 
@@ -110,43 +108,45 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
       <div className="tasks">
         <Input
           value={this.state.newTaskTitle}
-          placeholder="Add new task"
+          placeholder="Add Task"
           onChange={this._handleChange}
           onKeyDown={this._handleKeyDown}
         />
 
         <DragDropContext onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {this.props.task.tasks.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps
-                      )}
-                    >
-                      <Card>
-                        <Heading color="primary">{item.title}</Heading>
-                        <Button onClick={this._startTask.bind(this, item.id)}>Start</Button>
-                      </Card>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {this.props.task.tasks.map((item, index) => (
+                  <Draggable key={item.id} draggableId={item.id} index={index}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={getItemStyle(
+                          snapshot.isDragging,
+                          provided.draggableProps
+                        )}
+                      >
+                        <Card marginY={3} p={2} sx={{
+                          border:"1px solid black",
+                          borderRadius:"4px"
+                        }}>
+                          <Text>{item.title}</Text>
+                        </Card>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     );
   }

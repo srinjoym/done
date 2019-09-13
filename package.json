@@ -6,6 +6,7 @@
   "dependencies": {
     "@rebass/forms": "^4.0.5",
     "@rebass/preset": "^4.0.5",
+    "@theme-ui/prism": "^0.2.40",
     "@types/jest": "24.0.18",
     "@types/node": "^12.7.4",
     "@types/react": "16.9.2",
@@ -31,6 +32,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "theme-ui": "^0.2.42",
     "typescript": "3.6.2",
     "url": "^0.11.0"
   },
