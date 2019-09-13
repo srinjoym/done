@@ -1,10 +1,15 @@
 import React, {Component, CSSProperties} from 'react';
-import {Task} from './Types'
 import * as moment from 'moment';
-import { List, Input, Checkbox } from 'antd';
-// import {Input} from '@rebass/forms';
-import {Card, Heading, Button} from 'rebass'
-import { DragDropContext, Droppable, Draggable, DropResult, DraggingStyle, NotDraggingStyle, DraggableProvidedDraggableProps } from "react-beautiful-dnd";
+
+import { connect } from "react-redux";
+import { AppState } from "./store";
+
+import {addTask, updateTasks} from './store/task/actions'
+import {TaskState, Task} from './store/task/types'
+
+import { Input, } from '@rebass/forms';
+import {Card, Heading, Button } from 'rebass'
+import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvidedDraggableProps } from "react-beautiful-dnd";
 
 const { Search } = Input;
 const Store = require('electron-store');
@@ -12,9 +17,14 @@ const store = new Store();
 
 const grid = 8;
 
-type TaskState = {
-  tasks: Task[],
-  newTaskTitle: string,
+interface TaskViewProps {
+  updateTasks: typeof updateTasks;
+  addTask: typeof addTask;
+  task: TaskState;
+}
+
+interface TaskViewState {
+  newTaskTitle: string
 }
 
 // a little function to help us with reordering the result
@@ -45,42 +55,20 @@ const getListStyle = (isDraggingOver:boolean) => ({
   width: 250
 });
 
-class TaskView extends Component<{}, TaskState> {
+class TaskView extends Component<TaskViewProps, TaskViewState> {
 
   componentWillMount(){
-    store.clear()
     this.setState({
-      tasks: store.get('done.tasks') || [],
       newTaskTitle: ""
     })
-    this.handleChange = this.handleChange.bind(this)
-    this.addTask = this.addTask.bind(this)
+    this._handleChange = this._handleChange.bind(this)
+    this._handleKeyDown = this._handleKeyDown.bind(this)
     this.onDragEnd = this.onDragEnd.bind(this)
   }
 
-  componentWillUnmount(){
-    store.set('done.tasks', this.state.tasks)
-  }
-
-  handleChange(e: React.FormEvent) {
+  _handleChange(e: React.FormEvent) {
     const target = e.target as HTMLSelectElement;
     this.setState({newTaskTitle: target.value});
-  }
-
-  addTask(){
-    console.log("adding")
-    const tasks = this.state.tasks
-    tasks.push({
-      id: '_' + Math.random().toString(36).substr(2, 9),
-      title: this.state.newTaskTitle,
-      initialDuration: moment.duration(25, 'minutes'),
-      currentDuration: moment.duration(25, 'minutes'),
-      completed: false
-    })
-
-    this.setState({
-      tasks: tasks
-    })
   }
 
   onDragEnd(result: DropResult) {
@@ -90,27 +78,42 @@ class TaskView extends Component<{}, TaskState> {
     }
 
     const tasks = reorder(
-      this.state.tasks,
+      this.props.task.tasks,
       result.source.index,
       result.destination.index
     );
 
-    this.setState({
-      tasks
-    });
+    this.props.updateTasks(tasks);
+  }
+
+  _handleKeyDown (e: React.KeyboardEvent) {
+    if (e.key === 'Enter') {
+      const newTask = {
+        id: '_' + Math.random().toString(36).substr(2, 9),
+        title: this.state.newTaskTitle,
+        initialDuration: moment.duration(25, 'minutes'),
+        currentDuration: moment.duration(25, 'minutes'),
+        running: false
+      }
+
+      this.props.addTask(newTask)
+    }
+  }
+
+  _startTask (taskID: string) {
+    // Dispatch select task action
+    // this.props.startTask(taskID)
   }
 
   render () {
     return (
       <div className="tasks">
-
         <Input
           value={this.state.newTaskTitle}
           placeholder="Add new task"
-          onChange={this.handleChange}
-          onPressEnter={this.addTask}
+          onChange={this._handleChange}
+          onKeyDown={this._handleKeyDown}
         />
-
 
         <DragDropContext onDragEnd={this.onDragEnd}>
         <Droppable droppableId="droppable">
@@ -118,9 +121,8 @@ class TaskView extends Component<{}, TaskState> {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
             >
-              {this.state.tasks.map((item, index) => (
+              {this.props.task.tasks.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
                   {(provided, snapshot) => (
                     <div
@@ -133,8 +135,8 @@ class TaskView extends Component<{}, TaskState> {
                       )}
                     >
                       <Card>
-                        <Checkbox />
                         <Heading color="primary">{item.title}</Heading>
+                        <Button onClick={this._startTask.bind(this, item.id)}>Start</Button>
                       </Card>
                     </div>
                   )}
@@ -145,22 +147,16 @@ class TaskView extends Component<{}, TaskState> {
           )}
         </Droppable>
       </DragDropContext>
-
-
-        <List
-          itemLayout="horizontal"
-          dataSource={this.state.tasks}
-          renderItem={task => (
-            <List.Item>
-              <List.Item.Meta
-                title={task.title}
-              />
-            </List.Item>
-          )}
-        />
       </div>
     );
   }
 }
 
-export default TaskView;
+const mapStateToProps = (state: AppState) => ({
+  task: state.task
+});
+
+export default connect(
+  mapStateToProps,
+  {addTask, updateTasks}
+)(TaskView);
