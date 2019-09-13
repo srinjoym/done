@@ -44,6 +44,8 @@ export function pauseTimer () {
 }
 
 export function resetTimer (duration: moment.Duration) {
+  clearInterval(timer)
+
   return {
     type: RESET_TIMER,
     duration
