@@ -3,8 +3,7 @@ import { ThunkAction } from "redux-thunk";
 import * as moment from 'moment';
 import { AppState } from "../";
 
-import { START_TIMER, PAUSE_TIMER, RESET_TIMER, UPDATE_TIMER, ADVANCE_SESSION, TimerState } from "./types";
-import { addTaskTimeSpent } from "../task/actions";
+import { START_TIMER, PAUSE_TIMER, RESET_TIMER, UPDATE_TIMER, ADVANCE_SESSION } from "./types";
 // import { getCurrentSession } from "./selectors";
 
 let timer: number | undefined

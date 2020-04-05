@@ -3,8 +3,6 @@ import {
   Task,
   ADD_TASK,
   DELETE_TASK,
-  START_TASK,
-  STOP_TASK,
   TaskActionTypes,
   UPDATE_TASKS,
   ADD_TASK_TIME_SPENT

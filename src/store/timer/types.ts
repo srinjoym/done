@@ -1,5 +1,4 @@
 import * as moment from 'moment';
-import { Task } from '../task/types';
 
 export enum SessionType {
   Work = "Work",

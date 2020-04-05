@@ -3,7 +3,6 @@ import {
   START_TIMER,
   PAUSE_TIMER,
   RESET_TIMER,
-  TimerActionTypes,
   UPDATE_TIMER,
   Session,
   SessionType,
