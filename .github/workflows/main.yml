@@ -16,6 +16,7 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Run test script
         run: yarn test
   build:
