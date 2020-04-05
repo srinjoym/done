@@ -3,12 +3,12 @@ import { AppState } from "../index"
 
 export const getTimer = (state: AppState) => state.timer
 
-// export const getCurrentSession = createSelector(
-//   getTimer,
-//   timer => {
-//     return timer.sessions[timer.currentSessionID]
-//   }
-// )
+export const getCurrentSession = createSelector(
+  getTimer,
+  timer => {
+    return timer.sessions[timer.currentSessionID]
+  }
+)
 
 export const getPaused = createSelector(
   getTimer,
@@ -24,16 +24,10 @@ export const getCurrentTimeString = createSelector(
   }
 )
 
-// export const getDuration = createSelector(
-//   getCurrentSession,
-//   session => {
-//     return session.duration
-//   }
-// )
-
-// export const getType = createSelector(
-//   getCurrentSession,
-//   session => {
-//     return session.type
-//   }
-// )
+export const getSessionId = createSelector(
+  getTimer,
+  timer => {
+    console.log(timer.currentSessionID)
+    return timer.currentSessionID
+  }
+)

@@ -5,20 +5,23 @@ import { connect } from "react-redux";
 import { AppState } from "./store";
 
 import {addTask, updateTasks} from './store/task/actions'
+// import {setCurrentTaskID} from './store/task/actions'
 import {TaskState, Task} from './store/task/types'
 
-import { Input, } from '@rebass/forms';
-import { Card, Text } from 'rebass'
+import { Plus } from 'react-feather'
+import { Input, Box, Text, Button, IconButton } from '@chakra-ui/core';
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvidedDraggableProps } from "react-beautiful-dnd";
+import { TimerState } from './store/timer/types';
 
-const { Search } = Input;
 const Store = require('electron-store');
 const store = new Store();
 
 interface TaskViewProps {
   updateTasks: typeof updateTasks;
   addTask: typeof addTask;
+  // setCurrentTaskID: typeof setCurrentTaskID;
   task: TaskState;
+  timer: TimerState;
 }
 
 interface TaskViewState {
@@ -49,7 +52,7 @@ const getItemStyle = (isDragging: boolean, draggableStyle: DraggableProvidedDrag
 const getListStyle = (isDraggingOver:boolean) => ({
   // background: isDraggingOver ? "lightblue" : "lightgrey",
   // padding: 8,
-  width: 250
+  overflow: "scroll"
 });
 
 class TaskView extends Component<TaskViewProps, TaskViewState> {
@@ -88,9 +91,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
       const newTask = {
         id: '_' + Math.random().toString(36).substr(2, 9),
         title: this.state.newTaskTitle,
-        initialDuration: moment.duration(25, 'minutes'),
-        currentDuration: moment.duration(25, 'minutes'),
-        running: false
+        timeSpent: moment.duration(0)
       }
 
       this.props.addTask(newTask)
@@ -100,60 +101,85 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
 
   _startTask (taskID: string) {
     // Dispatch select task action
-    // this.props.startTask(taskID)
+    // this.props.setCurrentTaskID(taskID)
+
+    const tasks = this.props.task.tasks
+    tasks.some(task => task.id === taskID && tasks.unshift(task))
+    updateTasks(tasks)
   }
 
   render () {
     return (
-      <div className="tasks">
+      <Box display="flex" flexDirection="column" height="100%">
+        <Box flexGrow={1} height="100%" max-height="100%" overflow="scroll">
+          <DragDropContext onDragEnd={this.onDragEnd}>
+            <Droppable droppableId="droppable">
+              {(provided, snapshot) => (
+                <div
+                  {...provided.droppableProps}
+                  style={getListStyle(
+                    snapshot.isDraggingOver
+                  )}
+                  ref={provided.innerRef}
+                >
+                  {this.props.task.tasks.map((item, index) => (
+                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={getItemStyle(
+                            snapshot.isDragging,
+                            provided.draggableProps
+                          )}
+                        >
+                          <Box
+                            display="flex"
+                            py={1}
+                            px={3}
+                            m={4}
+                            backgroundColor={this.props.timer.currentTaskID == item.id ? "gray" : "white"}
+                            rounded="lg"
+                            borderWidth="1px"
+                            borderStyle="solid"
+                            >
+                            <Text flexGrow={1} my={2}>{item.title}</Text>
+                            <IconButton
+                              mt={1}
+                              size="sm"
+                              isRound={true}
+                              icon={Plus}
+                              onClick={this._startTask.bind(this, item.id)}
+                              aria-label="Add to focus session"/>
+                          </Box>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </Box>
+
         <Input
           value={this.state.newTaskTitle}
           placeholder="Add Task"
           onChange={this._handleChange}
           onKeyDown={this._handleKeyDown}
+          m={4}
+          isFullWidth={false}
         />
-
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {this.props.task.tasks.map((item, index) => (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={getItemStyle(
-                          snapshot.isDragging,
-                          provided.draggableProps
-                        )}
-                      >
-                        <Card marginY={3} p={2} sx={{
-                          border:"1px solid black",
-                          borderRadius:"4px"
-                        }}>
-                          <Text>{item.title}</Text>
-                        </Card>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </div>
+      </Box>
     );
   }
 }
 
 const mapStateToProps = (state: AppState) => ({
-  task: state.task
+  task: state.task,
+  timer: state.timer
 });
 
 export default connect(

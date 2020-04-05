@@ -1,8 +1,16 @@
-import { Task, ADD_TASK, DELETE_TASK, UPDATE_TASK, START_TASK } from "./types";
+import { Task, ADD_TASK, DELETE_TASK, ADD_TASK_TIME_SPENT, UPDATE_TASKS, START_TASK } from "./types";
+import * as moment from 'moment';
+
+export function addTaskTimeSpent(id: string, duration: moment.Duration) {
+  return {
+    type: ADD_TASK_TIME_SPENT,
+    duration
+  }
+}
 
 export function updateTasks(tasks: Task[]){
   return {
-    type: UPDATE_TASK,
+    type: UPDATE_TASKS,
     payload: tasks
   }
 }

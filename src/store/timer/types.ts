@@ -1,7 +1,10 @@
 import * as moment from 'moment';
 import { Task } from '../task/types';
 
-export enum SessionType { Work, Break }
+export enum SessionType {
+  Work = "Work",
+  Break = "Break"
+}
 
 export interface Session {
   duration: string;
@@ -20,11 +23,10 @@ export const START_TIMER = "START_TIMER";
 export const PAUSE_TIMER = "PAUSE_TIMER";
 export const RESET_TIMER = "RESET_TIMER";
 export const UPDATE_TIMER = "UPDATE_TIMER";
-export const SET_CURRENT_TASK_ID = "SET_CURRENT_TASK_ID";
+export const ADVANCE_SESSION = "ADVANCE_SESSION";
 
-interface SetCurrentTaskIDAction {
-  type: typeof SET_CURRENT_TASK_ID,
-  id: string
+interface AdvanceSessionAction {
+  type: typeof ADVANCE_SESSION
 }
 interface StartTimerAction {
   type: typeof START_TIMER;
@@ -44,4 +46,4 @@ interface ResetTimerAction {
   duration: moment.Duration;
 }
 
-export type TimerActionTypes = StartTimerAction | PauseTimerAction | ResetTimerAction | UpdateTimerAction | SetCurrentTaskIDAction;
+export type TimerActionTypes = StartTimerAction | PauseTimerAction | ResetTimerAction | UpdateTimerAction | AdvanceSessionAction;

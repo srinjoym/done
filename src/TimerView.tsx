@@ -1,67 +1,80 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
+import { Button, IconButton, Heading, Box, Progress, Text } from "@chakra-ui/core"
+import { Play, Pause, ChevronsRight } from "react-feather"
 import * as moment from 'moment';
 
-import { startCountdown, pauseTimer, resetTimer } from './store/timer/actions'
+import { startCountdown, pauseTimer, resetTimer, advanceSession } from './store/timer/actions';
 import { AppState } from "./store";
-import { TimerState } from './store/timer/types';
-import { Button, Text } from 'rebass'
+import { TimerState, Session } from './store/timer/types';
+import { getCurrentTimeString, getPaused, getSessionId, getCurrentSession } from './store/timer/selectors'
 
-const Store = require('electron-store');
-const store = new Store();
+
 
 interface TimerViewProps {
   startCountdown: typeof startCountdown;
   pauseTimer: typeof pauseTimer;
   resetTimer: typeof resetTimer;
-  timer: TimerState;
+  advanceSession: typeof advanceSession;
+  currentTimeString: string;
+  isPaused: boolean;
+  currentSession: Session;
 }
 
-class TimerView extends Component<TimerViewProps> {
+const newTimerView: React.FC<TimerViewProps> = props => {
+  const {startCountdown, pauseTimer, resetTimer, currentTimeString, isPaused, advanceSession, currentSession} = props;
+  const currentTime = moment.duration(currentTimeString)
 
-  componentWillMount () {
-    const tasks = store.get("done.tasks")
-  }
+  const _toggleTimer = () => isPaused ? startCountdown() : pauseTimer()
+  const _resetTimer = () => resetTimer(moment.duration(25, 'minutes'))
 
-  progressPercentage ():number {
-    return (this.props.timer.currentTime.seconds()/this.props.timer.initialTime.asSeconds())*100
-  }
-
-  _toggleTimer () {
-    if (this.props.timer.paused) {
-      this.props.startCountdown()
-    } else {
-      this.props.pauseTimer()
-    }
-  }
-
-  _resetTimer () {
-    this.props.resetTimer(moment.duration(25, 'minutes'))
-  }
-
-  render () {
-    return (
-      <div className="timer">
-        <Text
-          fontSize={7}
-          fontWeight='bold'
-          lineHeight='body'
+  return (
+    <Box pt={4} px={4}>
+      <Box display="flex">
+        <Heading
+          flexGrow={1}
+          my={0}
+          mx={1}
+          size="2xl"
+          fontSize="50px"
           color='primary'>
-          {moment.utc(this.props.timer.currentTime.asMilliseconds()).format("mm:ss")}
-        </Text>
+          {moment.utc(currentTime.asMilliseconds()).format("mm:ss")}
+        </Heading>
 
-        <Button onClick = {this._toggleTimer.bind(this)} mx={2}>{this.props.timer.paused? "Start":"Pause"}</Button>
-        <Button onClick = {this._resetTimer.bind(this)} mx={2} variant='outline'>Reset</Button>
-      </div>
-    );
-  }
+        <IconButton
+          onClick={_toggleTimer}
+          my={2}
+          mx={1}
+          isRound={true}
+          icon={isPaused? Play:Pause}
+          aria-label={isPaused? "Play":"Pause"}
+        />
+
+        <IconButton
+          onClick={advanceSession}
+          my={2}
+          mx={1}
+          isRound={true}
+          icon={ChevronsRight}
+          aria-label={"Skip"}
+        />
+      </Box>
+
+      <Text textAlign="center" color="grey" my={1}>{currentSession.type}</Text>
+      {/* <Button onClick={_resetTimer} m={2} variant='outline'>Reset</Button> */}
+      {/* <Button display="block" onClick={advanceSession} m={2}>Advance</Button> */}
+    </Box>
+  )
 }
 
 const mapStateToProps = (state: AppState) => ({
-  timer: state.timer
+  currentTimeString: getCurrentTimeString(state),
+  isPaused: getPaused(state),
+  currentSession: getCurrentSession(state)
 });
 
 export default connect(
   mapStateToProps,
-  {startCountdown, pauseTimer, resetTimer}
-)(TimerView);
+  {startCountdown, pauseTimer, resetTimer, advanceSession}
+)(newTimerView);
+

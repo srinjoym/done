@@ -6,16 +6,15 @@ import {
   START_TASK,
   STOP_TASK,
   TaskActionTypes,
-  UPDATE_TASK
+  UPDATE_TASKS,
+  ADD_TASK_TIME_SPENT
 } from "./types";
 import * as moment from 'moment';
 
 const initialTaskState: Task = {
   id: '_' + Math.random().toString(36).substr(2, 9),
   title: "",
-  initialDuration: moment.duration(),
-  currentDuration: moment.duration(),
-  running: false,
+  timeSpent: moment.duration(0)
 }
 
 const initialState: TaskState = {
@@ -26,16 +25,11 @@ function taskReducer(
   state = initialTaskState,
   action: TaskActionTypes):Task {
     switch (action.type) {
-      case START_TASK:
+      case ADD_TASK_TIME_SPENT:
         return {
           ...state,
-          running: true
-        };
-      case STOP_TASK:
-        return {
-          ...state,
-          running: false
-        };
+          timeSpent: state.timeSpent.add(action.duration)
+        }
       default:
         return state;
     }
@@ -46,7 +40,7 @@ export function tasksReducer(
   action: TaskActionTypes
 ): TaskState {
   switch (action.type) {
-    case UPDATE_TASK:
+    case UPDATE_TASKS:
       return {
         tasks: action.payload
       };

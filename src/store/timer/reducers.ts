@@ -5,9 +5,9 @@ import {
   RESET_TIMER,
   TimerActionTypes,
   UPDATE_TIMER,
-  SET_CURRENT_TASK_ID,
   Session,
-  SessionType
+  SessionType,
+  ADVANCE_SESSION
 } from "./types";
 import * as moment from 'moment';
 import produce from 'immer';
@@ -23,7 +23,7 @@ const shortBreakSession: Session = {
 }
 
 const longBreakSession: Session = {
-  duration: moment.duration(25, 'minutes').toISOString(),
+  duration: moment.duration(15, 'minutes').toISOString(),
   type: SessionType.Break
 }
 
@@ -43,15 +43,15 @@ export function timerReducer(state: TimerState = initialState, action) {
       case UPDATE_TIMER:
         draft.currentTime = action.duration.toISOString();
         break;
-      case SET_CURRENT_TASK_ID:
-        draft.currentSessionID = action.id;
-        break;
       case PAUSE_TIMER:
         draft.paused = true;
         break;
       case RESET_TIMER:
         draft.currentTime = draft.sessions[draft.currentSessionID].duration;
         break;
+      case ADVANCE_SESSION:
+        draft.currentSessionID = (draft.currentSessionID + 1)%10
+        draft.currentTime = draft.sessions[draft.currentSessionID].duration;
     }
   })
 }
