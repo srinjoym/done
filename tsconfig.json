@@ -21,6 +21,6 @@
     "jsx": "react"
   },
   "include": [
-    "src", "public/main.js"
+    "src", "public/electron.js"
   ]
 }

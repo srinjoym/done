@@ -1,9 +1,11 @@
 {
   "name": "done-desktop",
   "version": "0.1.0",
-  "main": "public/main.js",
+  "homepage": "./",
+  "main": "public/electron.js",
   "private": true,
   "dependencies": {
+    "@mdx-js/react": "^1.4.5",
     "@rebass/forms": "^4.0.5",
     "@rebass/preset": "^4.0.5",
     "@theme-ui/prism": "^0.2.40",
@@ -13,17 +15,17 @@
     "@types/react-beautiful-dnd": "^11.0.3",
     "@types/react-dom": "16.9.0",
     "@types/rebass": "^4.0.0",
-    "antd": "^3.23.2",
-    "electron": "^6.0.7",
     "electron-is-dev": "^1.1.0",
     "electron-store": "^4.0.0",
     "emotion-theming": "^10.0.18",
+    "immer": "^6.0.3",
     "moment": "^2.24.0",
     "node-sass": "^4.12.0",
     "path": "^0.12.7",
     "react": "^16.9.0",
     "react-beautiful-dnd": "^11.0.5",
     "react-circle": "^1.1.1",
+    "react-desktop": "^0.3.9",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.1",
     "react-scripts": "3.1.1",
@@ -32,8 +34,9 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
     "theme-ui": "^0.2.42",
-    "typescript": "3.6.2",
+    "typescript": "^3.6.3",
     "url": "^0.11.0"
   },
   "scripts": {
@@ -41,7 +44,10 @@
     "build": "rescripts build",
     "test": "rescripts test",
     "dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "electron-builder install-app-deps",
+    "preelectron-pack": "yarn build",
+    "electron-pack": "electron-builder -m"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -62,7 +68,28 @@
     "@rescripts/cli": "^0.0.12",
     "@rescripts/rescript-env": "^0.0.10",
     "concurrently": "^4.1.2",
+    "electron": "^6.0.7",
     "electron-builder": "^21.2.0",
     "wait-on": "^3.3.0"
+  },
+  "author": {
+    "name": "Srinjoy Majumdar",
+    "email": "srinjoy.majumdar@gmail.com",
+    "url": "https://www.srinjoy.me"
+  },
+  "build": {
+    "appId": "com.srinjoym.done-desktop",
+    "productName": "Done",
+    "copyright": "Copyright © 2019 ${author}",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
   }
 }

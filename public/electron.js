@@ -22,7 +22,8 @@ const createWindow = () => {
 }
 
 const setupMenubar = () => {
-  const icon = nativeImage.createFromPath(path.join(__dirname, './icon.png'))
+  const icon = nativeImage.createFromPath(path.join(__dirname, './iconTemplate.png'))
+  icon.setTemplateImage(true)
   tray = new Tray(icon)
 
   // Add a click handler so that when the user clicks on the menubar icon, it shows
