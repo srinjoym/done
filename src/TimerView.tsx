@@ -1,20 +1,19 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { connect } from "react-redux";
-import { Button, IconButton, Heading, Box, Progress, Text } from "@chakra-ui/core"
+import { IconButton, Heading, Box, Text } from "@chakra-ui/core"
 import { Play, Pause, ChevronsRight } from "react-feather"
 import * as moment from 'moment';
 
-import { startCountdown, pauseTimer, resetTimer, advanceSession } from './store/timer/actions';
+import { startCountdown, pauseTimer, advanceSession } from './store/timer/actions';
 import { AppState } from "./store";
-import { TimerState, Session } from './store/timer/types';
-import { getCurrentTimeString, getPaused, getSessionId, getCurrentSession } from './store/timer/selectors'
+import { Session } from './store/timer/types';
+import { getCurrentTimeString, getPaused, getCurrentSession } from './store/timer/selectors'
 
 
 
 interface TimerViewProps {
   startCountdown: typeof startCountdown;
   pauseTimer: typeof pauseTimer;
-  resetTimer: typeof resetTimer;
   advanceSession: typeof advanceSession;
   currentTimeString: string;
   isPaused: boolean;
@@ -22,11 +21,10 @@ interface TimerViewProps {
 }
 
 const newTimerView: React.FC<TimerViewProps> = props => {
-  const {startCountdown, pauseTimer, resetTimer, currentTimeString, isPaused, advanceSession, currentSession} = props;
+  const {startCountdown, pauseTimer, currentTimeString, isPaused, advanceSession, currentSession} = props;
   const currentTime = moment.duration(currentTimeString)
 
   const _toggleTimer = () => isPaused ? startCountdown() : pauseTimer()
-  const _resetTimer = () => resetTimer(moment.duration(25, 'minutes'))
 
   return (
     <Box pt={4} px={4}>
@@ -75,6 +73,6 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  {startCountdown, pauseTimer, resetTimer, advanceSession}
+  {startCountdown, pauseTimer, advanceSession}
 )(newTimerView);
 

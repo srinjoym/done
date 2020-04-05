@@ -8,13 +8,10 @@ import {addTask, updateTasks, deleteTask} from './store/task/actions'
 // import {setCurrentTaskID} from './store/task/actions'
 import {TaskState, Task} from './store/task/types'
 
-import { Check, Plus } from 'react-feather'
-import { Input, Box, Text, Button, IconButton } from '@chakra-ui/core';
+import { Check } from 'react-feather'
+import { Input, Box, Text, IconButton } from '@chakra-ui/core';
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvidedDraggableProps } from "react-beautiful-dnd";
 import { TimerState } from './store/timer/types';
-
-const Store = require('electron-store');
-const store = new Store();
 
 interface TaskViewProps {
   updateTasks: typeof updateTasks;
@@ -140,7 +137,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
                             py={1}
                             px={3}
                             m={4}
-                            backgroundColor={this.props.timer.currentTaskID == item.id ? "gray" : "white"}
+                            backgroundColor={this.props.timer.currentTaskID === item.id ? "gray" : "white"}
                             rounded="lg"
                             borderWidth="1px"
                             borderStyle="solid"
