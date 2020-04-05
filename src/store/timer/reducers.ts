@@ -4,44 +4,55 @@ import {
   PAUSE_TIMER,
   RESET_TIMER,
   TimerActionTypes,
-  UPDATE_TIMER
+  UPDATE_TIMER,
+  SET_CURRENT_TASK_ID,
+  Session,
+  SessionType
 } from "./types";
 import * as moment from 'moment';
+import produce from 'immer';
+
+const workSession: Session = {
+  duration: moment.duration(25, 'minutes').toISOString(),
+  type: SessionType.Work
+}
+
+const shortBreakSession: Session = {
+  duration: moment.duration(5, 'minutes').toISOString(),
+  type: SessionType.Break
+}
+
+const longBreakSession: Session = {
+  duration: moment.duration(25, 'minutes').toISOString(),
+  type: SessionType.Break
+}
 
 const initialState: TimerState = {
-  initialTime: moment.duration(25, 'minutes'),
-  currentTime: moment.duration(25, 'minutes'),
+  currentSessionID: 0,
+  sessions: [workSession, shortBreakSession, workSession, shortBreakSession, workSession, shortBreakSession, workSession, shortBreakSession, workSession, longBreakSession],
+  currentTime: moment.duration(workSession.duration).toISOString(),
   paused: true
 };
 
-export function timerReducer(
-  state = initialState,
-  action: TimerActionTypes
-): TimerState {
-  switch (action.type) {
-    case START_TIMER:
-      return {
-        ...state,
-        paused: false
-      };
-    case UPDATE_TIMER:
-      return {
-        ...state,
-        currentTime: action.duration
-      }
-    case PAUSE_TIMER:
-      return {
-        ...state,
-        paused: true
-      };
-    case RESET_TIMER:
-      return {
-        ...state,
-        initialTime: action.duration,
-        currentTime: action.duration,
-        paused: true
-      };
-    default:
-      return state
-  }
+export function timerReducer(state: TimerState = initialState, action) {
+  return produce(state, draft => {
+    switch (action.type) {
+      case START_TIMER:
+        draft.paused = false;
+        break;
+      case UPDATE_TIMER:
+        draft.currentTime = action.duration.toISOString();
+        break;
+      case SET_CURRENT_TASK_ID:
+        draft.currentSessionID = action.id;
+        break;
+      case PAUSE_TIMER:
+        draft.paused = true;
+        break;
+      case RESET_TIMER:
+        draft.currentTime = draft.sessions[draft.currentSessionID].duration;
+        break;
+    }
+  })
 }
+
