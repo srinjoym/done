@@ -4,11 +4,11 @@ import * as moment from 'moment';
 import { connect } from "react-redux";
 import { AppState } from "./store";
 
-import {addTask, updateTasks} from './store/task/actions'
+import {addTask, updateTasks, deleteTask} from './store/task/actions'
 // import {setCurrentTaskID} from './store/task/actions'
 import {TaskState, Task} from './store/task/types'
 
-import { Plus } from 'react-feather'
+import { Check, Plus } from 'react-feather'
 import { Input, Box, Text, Button, IconButton } from '@chakra-ui/core';
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvidedDraggableProps } from "react-beautiful-dnd";
 import { TimerState } from './store/timer/types';
@@ -19,6 +19,7 @@ const store = new Store();
 interface TaskViewProps {
   updateTasks: typeof updateTasks;
   addTask: typeof addTask;
+  deleteTask: typeof deleteTask;
   // setCurrentTaskID: typeof setCurrentTaskID;
   task: TaskState;
   timer: TimerState;
@@ -145,13 +146,20 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
                             borderStyle="solid"
                             >
                             <Text flexGrow={1} my={2}>{item.title}</Text>
-                            <IconButton
+                            {/* <IconButton
                               mt={1}
                               size="sm"
                               isRound={true}
                               icon={Plus}
                               onClick={this._startTask.bind(this, item.id)}
-                              aria-label="Add to focus session"/>
+                              aria-label="Add to focus session"/> */}
+                            <IconButton
+                              mt={1}
+                              size="xs"
+                              isRound={true}
+                              icon={() => <Check size={15}/>}
+                              onClick={() => this.props.deleteTask(item.id)}
+                              aria-label="Complete Task"/>
                           </Box>
                         </div>
                       )}
@@ -184,5 +192,5 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  {addTask, updateTasks}
+  {addTask, updateTasks, deleteTask}
 )(TaskView);
