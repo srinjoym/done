@@ -1,6 +1,6 @@
 {
   "name": "done-desktop",
-  "version": "0.1.2",
+  "version": "0.1.0",
   "homepage": "./",
   "main": "public/electron.js",
   "private": true,

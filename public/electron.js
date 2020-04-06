@@ -49,8 +49,8 @@ const showWindow = () => {
   const windowPos = mainWindow.getBounds()
   let x, y = 0
   if (process.platform === 'darwin') {
-    x = Math.round(trayPos.x + (trayPos.width / 2) - (windowPos.width / 2))
-    y = Math.round(trayPos.y + trayPos.height)
+    x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowPos.width / 2))
+    y = Math.round(trayBounds.y + trayBounds.height)
 
     mainWindow.setPosition(x, y, false)
   } else {
