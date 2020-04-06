@@ -50,7 +50,6 @@ const getItemStyle = (isDragging: boolean, draggableStyle: DraggableProvidedDrag
 const getListStyle = (isDraggingOver:boolean) => ({
   // background: isDraggingOver ? "lightblue" : "lightgrey",
   // padding: 8,
-  overflow: "scroll"
 });
 
 class TaskView extends Component<TaskViewProps, TaskViewState> {
@@ -109,7 +108,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
   render () {
     return (
       <Box display="flex" flexDirection="column" height="100%">
-        <Box flexGrow={1} height="100%" max-height="100%" overflow="scroll">
+        <Box flexGrow={1} height="100%" max-height="100%" overflowY="scroll">
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId="droppable">
               {(provided, snapshot) => (

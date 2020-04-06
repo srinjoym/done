@@ -2,6 +2,7 @@ const {app, BrowserWindow, nativeImage, Tray} = require("electron")
 const path = require("path")
 const url = require("url")
 const isDev = require("electron-is-dev")
+const Positioner = require('electron-positioner')
 
 let mainWindow = null
 let tray = null
@@ -42,19 +43,20 @@ const toggleWindow = () => {
 }
 
 const showWindow = () => {
-  const trayPos = tray.getBounds()
+  const positioner = new Positioner(mainWindow);
+  const trayBounds = tray.getBounds()
+
   const windowPos = mainWindow.getBounds()
   let x, y = 0
   if (process.platform === 'darwin') {
     x = Math.round(trayPos.x + (trayPos.width / 2) - (windowPos.width / 2))
     y = Math.round(trayPos.y + trayPos.height)
+
+    mainWindow.setPosition(x, y, false)
   } else {
-    x = Math.round(trayPos.x + (trayPos.width / 2) - (windowPos.width / 2))
-    y = Math.round(trayPos.y + trayPos.height * 10)
+    positioner.move('trayBottomCenter', trayBounds)
   }
 
-
-  mainWindow.setPosition(x, y, false)
   mainWindow.show()
   mainWindow.focus()
 }
