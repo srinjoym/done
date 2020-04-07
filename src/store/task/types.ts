@@ -4,6 +4,7 @@ export interface Task {
   id: string;
   title: string;
   timeSpent: moment.Duration;
+  completed: boolean;
   description?: string;
 }
 
@@ -17,6 +18,7 @@ export const START_TASK = "START_TASK";
 export const STOP_TASK = "STOP_TASK";
 export const ADD_TASK_TIME_SPENT = "ADD_TASK_TIME_SPENT";
 export const UPDATE_TASKS = "UPDATE_TASKS";
+export const SET_TASK_COMPLETE = "SET_TASK_COMPLETE";
 
 interface AddTaskAction {
   type: typeof ADD_TASK;
@@ -30,7 +32,10 @@ interface UpdateTasksAction {
 
 interface AddTaskTimeSpentAction {
   type: typeof ADD_TASK_TIME_SPENT;
-  duration: moment.Duration;
+  meta: {
+    duration: moment.Duration;
+    id: string;
+  }
 }
 
 interface DeleteTaskAction {
@@ -50,4 +55,12 @@ interface StopTaskAction {
   payload: Task;
 }
 
-export type TaskActionTypes = AddTaskAction | DeleteTaskAction | StartTaskAction | StopTaskAction | UpdateTasksAction | AddTaskTimeSpentAction;
+interface SetTaskCompleteAction {
+  type: typeof SET_TASK_COMPLETE;
+  meta: {
+    id: string;
+    status: boolean;
+  };
+}
+
+export type TaskActionTypes = AddTaskAction | DeleteTaskAction | StartTaskAction | StopTaskAction | UpdateTasksAction | AddTaskTimeSpentAction | SetTaskCompleteAction;

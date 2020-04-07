@@ -5,14 +5,16 @@ import {
   DELETE_TASK,
   TaskActionTypes,
   UPDATE_TASKS,
-  ADD_TASK_TIME_SPENT
+  ADD_TASK_TIME_SPENT,
+  SET_TASK_COMPLETE
 } from "./types";
 import * as moment from 'moment';
 
 const initialTaskState: Task = {
   id: '_' + Math.random().toString(36).substr(2, 9),
   title: "",
-  timeSpent: moment.duration(0)
+  timeSpent: moment.duration(0),
+  completed: false
 }
 
 const initialState: TaskState = {
@@ -24,10 +26,25 @@ function taskReducer(
   action: TaskActionTypes):Task {
     switch (action.type) {
       case ADD_TASK_TIME_SPENT:
-        return {
-          ...state,
-          timeSpent: state.timeSpent.add(action.duration)
+        if (action.meta.id === state.id) {
+          return {
+            ...state,
+            timeSpent: state.timeSpent.add(action.meta.duration)
+          }
+        } else {
+          return state;
         }
+        // falls through
+      case SET_TASK_COMPLETE:
+        if (action.meta.id === state.id) {
+          return {
+            ...state,
+            completed: action.meta.status
+          }
+        } else {
+          return state;
+        }
+        // falls through
       default:
         return state;
     }

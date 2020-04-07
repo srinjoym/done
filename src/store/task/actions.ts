@@ -1,10 +1,13 @@
-import { Task, ADD_TASK, DELETE_TASK, ADD_TASK_TIME_SPENT, UPDATE_TASKS, START_TASK } from "./types";
+import { Task, ADD_TASK, DELETE_TASK, ADD_TASK_TIME_SPENT, UPDATE_TASKS, START_TASK, SET_TASK_COMPLETE } from "./types";
 import * as moment from 'moment';
 
 export function addTaskTimeSpent(id: string, duration: moment.Duration) {
   return {
     type: ADD_TASK_TIME_SPENT,
-    duration
+    meta: {
+      id,
+      duration
+    }
   }
 }
 
@@ -38,4 +41,14 @@ export function deleteTask(id: string) {
       id
     }
   };
+}
+
+export function setTaskComplete(id: string, status: boolean) {
+  return {
+    type: SET_TASK_COMPLETE,
+    meta: {
+      id,
+      status
+    }
+  }
 }

@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import { connect } from "react-redux";
 import { AppState } from "./store";
 
-import {addTask, updateTasks, deleteTask} from './store/task/actions'
+import {addTask, updateTasks, deleteTask, setTaskComplete} from './store/task/actions'
 // import {setCurrentTaskID} from './store/task/actions'
 import {TaskState, Task} from './store/task/types'
 
@@ -17,6 +17,7 @@ interface TaskViewProps {
   updateTasks: typeof updateTasks;
   addTask: typeof addTask;
   deleteTask: typeof deleteTask;
+  setTaskComplete: typeof setTaskComplete;
   // setCurrentTaskID: typeof setCurrentTaskID;
   task: TaskState;
   timer: TimerState;
@@ -88,7 +89,8 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
       const newTask = {
         id: '_' + Math.random().toString(36).substr(2, 9),
         title: this.state.newTaskTitle,
-        timeSpent: moment.duration(0)
+        timeSpent: moment.duration(0),
+        completed: false
       }
 
       this.props.addTask(newTask)
@@ -141,21 +143,36 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
                             borderWidth="1px"
                             borderStyle="solid"
                             >
-                            <Text flexGrow={1} my={2}>{item.title}</Text>
-                            {/* <IconButton
-                              mt={1}
-                              size="sm"
-                              isRound={true}
-                              icon={Plus}
-                              onClick={this._startTask.bind(this, item.id)}
-                              aria-label="Add to focus session"/> */}
                             <IconButton
-                              mt={1}
+                              mt={2}
                               size="xs"
                               isRound={true}
-                              icon={() => <Check size={15}/>}
-                              onClick={() => this.props.deleteTask(item.id)}
-                              aria-label="Complete Task"/>
+                              variant="outline"
+                              icon={item.completed ? (() => <Check size={15}/>):undefined }
+                              onClick={() => this.props.setTaskComplete(item.id, !item.completed)}
+                              _focus={undefined} // remove focus highlighting
+                              aria-label="Complete Task"
+                            />
+
+                            <Text
+                              flexGrow={1}
+                              my={2}
+                              mx={3}
+                              color={item.completed? "grey":undefined}
+                              as={item.completed? "s":"p"}>
+                              {item.title}
+                            </Text>
+                    
+                            <IconButton
+                              mt={2}
+                              size="xs"
+                              isRound={true}
+                              variant="outline"
+                              icon={item.completed ? (() => <Check size={15}/>):undefined }
+                              onClick={() => this.props.setTaskComplete(item.id, !item.completed)}
+                              _focus={undefined} // remove focus highlighting
+                              aria-label="Complete Task"
+                            />
                           </Box>
                         </div>
                       )}
@@ -188,5 +205,5 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  {addTask, updateTasks, deleteTask}
+  {addTask, updateTasks, deleteTask, setTaskComplete}
 )(TaskView);
