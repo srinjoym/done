@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { AppState } from "../";
 
 import { START_TIMER, PAUSE_TIMER, RESET_TIMER, UPDATE_TIMER, ADVANCE_SESSION } from "./types";
+import { addTaskTimeSpent } from "../task/actions";
 // import { getCurrentSession } from "./selectors";
 
 let timer: number | undefined
@@ -15,6 +16,9 @@ export const startCountdown = (): ThunkAction<void, AppState, null, Action<strin
     const currentTime = moment.duration(state.timer.currentTime)
     if (currentTime.asMilliseconds() >= 0) {
       dispatch(updateTime(currentTime.subtract(1, 'second')))
+
+      if (state.task.focusTaskId)
+        dispatch(addTaskTimeSpent(state.task.focusTaskId, moment.duration(1, 'second')))
     } else {
       clearInterval(timer)
       triggerNotification()

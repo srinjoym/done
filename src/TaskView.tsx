@@ -4,11 +4,11 @@ import * as moment from 'moment';
 import { connect } from "react-redux";
 import { AppState } from "./store";
 
-import {addTask, updateTasks, deleteTask, setTaskComplete} from './store/task/actions'
+import {addTask, updateTasks, deleteTask, setTaskComplete, setFocusTaskId} from './store/task/actions'
 // import {setCurrentTaskID} from './store/task/actions'
 import {TaskState, Task} from './store/task/types'
 
-import { Check } from 'react-feather'
+import { Check, Plus } from 'react-feather'
 import { Input, Box, Text, IconButton } from '@chakra-ui/core';
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvidedDraggableProps } from "react-beautiful-dnd";
 import { TimerState } from './store/timer/types';
@@ -18,7 +18,7 @@ interface TaskViewProps {
   addTask: typeof addTask;
   deleteTask: typeof deleteTask;
   setTaskComplete: typeof setTaskComplete;
-  // setCurrentTaskID: typeof setCurrentTaskID;
+  setFocusTaskId: typeof setFocusTaskId;
   task: TaskState;
   timer: TimerState;
 }
@@ -107,6 +107,64 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
     updateTasks(tasks)
   }
 
+  taskCard (item) {
+    return (
+      <Box
+        display="flex"
+        py={1}
+        px={3}
+        m={4}
+        backgroundColor={this.props.timer.currentTaskID === item.id ? "gray" : "white"}
+        rounded="lg"
+        borderWidth="1px"
+        borderStyle="solid"
+        alignItems="center"
+        >
+        <IconButton
+          size="xs"
+          isRound={true}
+          variant="outline"
+          icon={item.completed ? (() => <Check size={15}/>):undefined }
+          onClick={() => this.props.setTaskComplete(item.id, !item.completed)}
+          _focus={undefined} // remove focus highlighting
+          aria-label="Complete Task"
+        />
+
+        <Box display="flex" flexDirection="column" flexGrow={1} alignContent="center">
+
+          <Text
+            mt={2}
+            mb={(this.props.task.focusTaskId && item.timeSpent > 0) ? 1:2}
+            mx={3}
+            color={item.completed? "grey":undefined}
+            as={item.completed? "s":"p"}>
+            {item.title}
+          </Text>
+
+          {this.props.task.focusTaskId && item.timeSpent > 0 &&
+          <Text
+            fontSize="10px"
+            color={"grey"}
+            mx={3}
+            mb={2}>
+            Time: {item.timeSpent.humanize()}
+          </Text>
+          }
+        </Box>
+
+        <IconButton
+          size="xs"
+          isRound={true}
+          variant="outline"
+          icon={() => <Plus size={15}/>}
+          onClick={() => this.props.setFocusTaskId(item.id)}
+          _focus={undefined} // remove focus highlighting
+          aria-label="Complete Task"
+        />
+      </Box>
+    )
+  }
+
   render () {
     return (
       <Box display="flex" flexDirection="column" height="100%">
@@ -121,7 +179,9 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
                   )}
                   ref={provided.innerRef}
                 >
-                  {this.props.task.tasks.map((item, index) => (
+                  {this.props.task.focusTaskId && this.taskCard(this.props.task.tasks.find(task => task.id === this.props.task.focusTaskId))}
+
+                  {this.props.task.tasks.filter(task => task.id !== this.props.task.focusTaskId).map((item, index) => (
                     <Draggable key={item.id} draggableId={item.id} index={index}>
                       {(provided, snapshot) => (
                         <div
@@ -133,47 +193,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
                             provided.draggableProps
                           )}
                         >
-                          <Box
-                            display="flex"
-                            py={1}
-                            px={3}
-                            m={4}
-                            backgroundColor={this.props.timer.currentTaskID === item.id ? "gray" : "white"}
-                            rounded="lg"
-                            borderWidth="1px"
-                            borderStyle="solid"
-                            >
-                            <IconButton
-                              mt={2}
-                              size="xs"
-                              isRound={true}
-                              variant="outline"
-                              icon={item.completed ? (() => <Check size={15}/>):undefined }
-                              onClick={() => this.props.setTaskComplete(item.id, !item.completed)}
-                              _focus={undefined} // remove focus highlighting
-                              aria-label="Complete Task"
-                            />
-
-                            <Text
-                              flexGrow={1}
-                              my={2}
-                              mx={3}
-                              color={item.completed? "grey":undefined}
-                              as={item.completed? "s":"p"}>
-                              {item.title}
-                            </Text>
-                    
-                            <IconButton
-                              mt={2}
-                              size="xs"
-                              isRound={true}
-                              variant="outline"
-                              icon={item.completed ? (() => <Check size={15}/>):undefined }
-                              onClick={() => this.props.setTaskComplete(item.id, !item.completed)}
-                              _focus={undefined} // remove focus highlighting
-                              aria-label="Complete Task"
-                            />
-                          </Box>
+                          {this.taskCard(item)}
                         </div>
                       )}
                     </Draggable>
@@ -205,5 +225,5 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  {addTask, updateTasks, deleteTask, setTaskComplete}
+  {addTask, updateTasks, deleteTask, setTaskComplete, setFocusTaskId}
 )(TaskView);

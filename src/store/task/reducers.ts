@@ -6,7 +6,8 @@ import {
   TaskActionTypes,
   UPDATE_TASKS,
   ADD_TASK_TIME_SPENT,
-  SET_TASK_COMPLETE
+  SET_TASK_COMPLETE,
+  SET_FOCUS_TASK_ID
 } from "./types";
 import * as moment from 'moment';
 
@@ -57,22 +58,30 @@ export function tasksReducer(
   switch (action.type) {
     case UPDATE_TASKS:
       return {
+        ...state,
         tasks: action.payload
       };
     case ADD_TASK:
       return {
+        ...state,
         tasks: [...state.tasks, action.payload]
       };
     case DELETE_TASK:
       return {
+        ...state,
         tasks: state.tasks.filter(
           task => task.id !== action.meta.id
         )
+      };
+    case SET_FOCUS_TASK_ID:
+      return {
+        ...state,
+        focusTaskId: action.meta.id
       };
     default:
       const tasks = state.tasks.map((task) => {
         return taskReducer(task, action)
       })
-      return { tasks }
+      return { ...state, tasks }
   }
 }

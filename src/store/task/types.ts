@@ -10,6 +10,7 @@ export interface Task {
 
 export interface TaskState {
   tasks: Task[];
+  focusTaskId?: string;
 }
 
 export const ADD_TASK = "ADD_TASK";
@@ -19,6 +20,7 @@ export const STOP_TASK = "STOP_TASK";
 export const ADD_TASK_TIME_SPENT = "ADD_TASK_TIME_SPENT";
 export const UPDATE_TASKS = "UPDATE_TASKS";
 export const SET_TASK_COMPLETE = "SET_TASK_COMPLETE";
+export const SET_FOCUS_TASK_ID = "SET_FOCUS_TASK_ID";
 
 interface AddTaskAction {
   type: typeof ADD_TASK;
@@ -63,4 +65,11 @@ interface SetTaskCompleteAction {
   };
 }
 
-export type TaskActionTypes = AddTaskAction | DeleteTaskAction | StartTaskAction | StopTaskAction | UpdateTasksAction | AddTaskTimeSpentAction | SetTaskCompleteAction;
+interface SetFocusTaskIdAction {
+  type: typeof SET_FOCUS_TASK_ID;
+  meta: {
+    id?: string;
+  };
+}
+
+export type TaskActionTypes = AddTaskAction | DeleteTaskAction | StartTaskAction | StopTaskAction | UpdateTasksAction | AddTaskTimeSpentAction | SetTaskCompleteAction | SetFocusTaskIdAction;

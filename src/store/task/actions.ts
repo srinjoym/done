@@ -1,4 +1,4 @@
-import { Task, ADD_TASK, DELETE_TASK, ADD_TASK_TIME_SPENT, UPDATE_TASKS, START_TASK, SET_TASK_COMPLETE } from "./types";
+import { Task, ADD_TASK, DELETE_TASK, ADD_TASK_TIME_SPENT, UPDATE_TASKS, START_TASK, SET_TASK_COMPLETE, SET_FOCUS_TASK_ID } from "./types";
 import * as moment from 'moment';
 
 export function addTaskTimeSpent(id: string, duration: moment.Duration) {
@@ -49,6 +49,15 @@ export function setTaskComplete(id: string, status: boolean) {
     meta: {
       id,
       status
+    }
+  }
+}
+
+export function setFocusTaskId(id: string) {
+  return {
+    type: SET_FOCUS_TASK_ID,
+    meta: {
+      id
     }
   }
 }
