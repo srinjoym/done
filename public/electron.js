@@ -3,6 +3,7 @@ const path = require("path")
 const url = require("url")
 const isDev = require("electron-is-dev")
 const Positioner = require('electron-positioner')
+const { ipcMain, Notification } = require('electron')
 
 let mainWindow = null
 let tray = null
@@ -61,10 +62,22 @@ const showWindow = () => {
   mainWindow.focus()
 }
 
-
 app.on("ready", () => {
   setupMenubar()
   createWindow()
+
+  ipcMain.on("sendNotification", () => {
+    const notification = new Notification({
+      title: 'Focus session ended',
+      body: 'Let\'s take a break!',
+      timeoutType: 'never',
+    })
+    notification.show()
+
+    notification.on("click", () => {
+      showWindow()
+    })
+  })
 })
 
 app.on("window-all-closed", function () {
