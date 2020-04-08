@@ -107,6 +107,14 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
     updateTasks(tasks)
   }
 
+  _completeTask(id: string, completed: boolean) {
+    if (completed === true && this.props.task.focusTaskId) {
+      this.props.setFocusTaskId(undefined)
+    }
+
+    this.props.setTaskComplete(id, completed)
+  }
+
   taskCard (item) {
     return (
       <Box
@@ -125,7 +133,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
           isRound={true}
           variant="outline"
           icon={item.completed ? (() => <Check size={15}/>):undefined }
-          onClick={() => this.props.setTaskComplete(item.id, !item.completed)}
+          onClick={() => this._completeTask(item.id, !item.completed)}
           _focus={undefined} // remove focus highlighting
           aria-label="Complete Task"
         />
@@ -141,7 +149,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
             {item.title}
           </Text>
 
-          {this.props.task.focusTaskId && item.timeSpent > 0 &&
+          {item.timeSpent > 0 &&
           <Text
             fontSize="10px"
             color={"grey"}
@@ -152,6 +160,7 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
           }
         </Box>
 
+        { !(this.props.task.focusTaskId === item.id) &&
         <IconButton
           size="xs"
           isRound={true}
@@ -161,11 +170,19 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
           _focus={undefined} // remove focus highlighting
           aria-label="Complete Task"
         />
+        }
       </Box>
     )
   }
 
   render () {
+    const focusedTask = this.props.task.tasks.find(task => task.id === this.props.task.focusTaskId)
+
+    const otherTasks = this.props.task.tasks.filter(task =>
+      task.id !== this.props.task.focusTaskId
+      && task.completed === false
+    )
+
     return (
       <Box display="flex" flexDirection="column" height="100%">
         <Box flexGrow={1} height="100%" max-height="100%" overflowY="scroll">
@@ -179,9 +196,9 @@ class TaskView extends Component<TaskViewProps, TaskViewState> {
                   )}
                   ref={provided.innerRef}
                 >
-                  {this.props.task.focusTaskId && this.taskCard(this.props.task.tasks.find(task => task.id === this.props.task.focusTaskId))}
+                  {focusedTask && this.taskCard(focusedTask)}
 
-                  {this.props.task.tasks.filter(task => task.id !== this.props.task.focusTaskId).map((item, index) => (
+                  {otherTasks.map((item, index) => (
                     <Draggable key={item.id} draggableId={item.id} index={index}>
                       {(provided, snapshot) => (
                         <div

@@ -53,7 +53,7 @@ export function setTaskComplete(id: string, status: boolean) {
   }
 }
 
-export function setFocusTaskId(id: string) {
+export function setFocusTaskId(id?: string) {
   return {
     type: SET_FOCUS_TASK_ID,
     meta: {
