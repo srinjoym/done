@@ -2,11 +2,10 @@ import { Action } from "redux";
 import { ThunkAction } from "redux-thunk";
 import * as moment from 'moment';
 import { AppState } from "../";
-
 import { START_TIMER, PAUSE_TIMER, RESET_TIMER, UPDATE_TIMER, ADVANCE_SESSION } from "./types";
 import { addTaskTimeSpent } from "../task/actions";
-// import { getCurrentSession } from "./selectors";
 
+const { ipcRenderer } = require('electron')
 let timer: number | undefined
 
 export const startCountdown = (): ThunkAction<void, AppState, null, Action<string>> => async (dispatch, getState) => {
@@ -64,7 +63,6 @@ export function resetTimer (duration: moment.Duration) {
 }
 
 function triggerNotification() {
-  new Notification('Focus session ended', {
-    body: 'Let\'s take a break!'
-  })
+  console.log("send messagw")
+  ipcRenderer.send('session-notification', "hello")
 }

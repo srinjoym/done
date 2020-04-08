@@ -12,7 +12,7 @@ import * as moment from 'moment';
 import produce from 'immer';
 
 const workSession: Session = {
-  duration: moment.duration(25, 'minutes').toISOString(),
+  duration: moment.duration(10, 'seconds').toISOString(),
   type: SessionType.Work
 }
 
