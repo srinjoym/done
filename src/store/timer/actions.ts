@@ -63,6 +63,5 @@ export function resetTimer (duration: moment.Duration) {
 }
 
 function triggerNotification() {
-  console.log("send messagw")
-  ipcRenderer.send('session-notification', "hello")
+  ipcRenderer.send('sendNotification')
 }

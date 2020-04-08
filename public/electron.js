@@ -66,16 +66,17 @@ app.on("ready", () => {
   setupMenubar()
   createWindow()
 
-  
-  ipcMain.on("session-notifcation", () => {
-    console.log("hello")
+  ipcMain.on("sendNotification", () => {
     const notification = new Notification({
       title: 'Focus session ended',
       body: 'Let\'s take a break!',
       timeoutType: 'never',
-      sound: 'public/chime.mp3'
     })
     notification.show()
+
+    notification.on("click", () => {
+      showWindow()
+    })
   })
 })
 
