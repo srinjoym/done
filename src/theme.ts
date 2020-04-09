@@ -4,7 +4,7 @@ export const theme: ITheme = {
   ...defaultTheme,
   fonts: {
     ...defaultTheme.fonts,
-    heading: `"Inter", system-ui, sans-serif`,
-    body: `"Inter", system-ui, sans-serif`
+    heading: `system-ui, sans-serif`,
+    body: `system-ui, sans-serif`
   }
 }

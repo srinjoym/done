@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { IconButton, Heading, Box, Text } from "@chakra-ui/core"
-import { Play, Pause, ChevronsRight } from "react-feather"
+import { IconButton, Icon, Heading, Box, Text, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/core"
+import { Play, Pause, MoreVertical } from "react-feather"
 import * as moment from 'moment';
 
-import { startCountdown, pauseTimer, advanceSession } from './store/timer/actions';
+import { startCountdown, pauseTimer, advanceSession, resetTimer } from './store/timer/actions';
 import { AppState } from "./store";
 import { Session } from './store/timer/types';
 import { getCurrentTimeString, getPaused, getCurrentSession } from './store/timer/selectors'
@@ -15,6 +15,7 @@ interface TimerViewProps {
   startCountdown: typeof startCountdown;
   pauseTimer: typeof pauseTimer;
   advanceSession: typeof advanceSession;
+  resetTimer: typeof resetTimer;
   currentTimeString: string;
   isPaused: boolean;
   currentSession: Session;
@@ -48,14 +49,16 @@ const newTimerView: React.FC<TimerViewProps> = props => {
           aria-label={isPaused? "Play":"Pause"}
         />
 
-        <IconButton
-          onClick={advanceSession}
-          my={2}
-          mx={1}
-          isRound={true}
-          icon={ChevronsRight}
-          aria-label={"Skip"}
-        />
+        <Menu>
+          <Box mt={4} ml={1}>
+            <MenuButton as={MoreVertical}/>
+          </Box>
+
+          <MenuList placement="bottom">
+            <MenuItem onClick={advanceSession}>Skip Session</MenuItem>
+            <MenuItem onClick={resetTimer}>Reset session</MenuItem>
+          </MenuList>
+        </Menu>
       </Box>
 
       <Text textAlign="center" color="grey" my={1}>{currentSession.type}</Text>
@@ -73,6 +76,6 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  {startCountdown, pauseTimer, advanceSession}
+  {startCountdown, pauseTimer, advanceSession, resetTimer}
 )(newTimerView);
 

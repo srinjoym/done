@@ -42,7 +42,6 @@ interface PauseTimerAction {
 
 interface ResetTimerAction {
   type: typeof RESET_TIMER;
-  duration: moment.Duration;
 }
 
 export type TimerActionTypes = StartTimerAction | PauseTimerAction | ResetTimerAction | UpdateTimerAction | AdvanceSessionAction;
