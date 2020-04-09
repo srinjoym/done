@@ -73,7 +73,7 @@ const TaskView:React.FC<TaskViewProps> = ({tasks, focusTaskId, updateTasks, addT
     item,
     focusTaskId === item.id,
     () => _completeTask(item.id, !item.completed),
-    () => setFocusTaskId(item.id))
+    () => focusTaskId === item.id ? setFocusTaskId(undefined):setFocusTaskId(item.id))
 
   const focusedTask = tasks.find(task => task.id === focusTaskId)
   const otherTasks = tasks.filter(task => task.id !== focusTaskId && task.completed === false)
