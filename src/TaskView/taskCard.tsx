@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Box, Text, IconButton, Icon } from '@chakra-ui/core';
+import { Box, Text, IconButton } from '@chakra-ui/core';
 import { Check, Plus, X } from 'react-feather'
 
 const taskCard = (item, isFocused, onCheckClick, onFocusClick) => (
