@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Text, IconButton } from '@chakra-ui/core';
 import { Check, Plus, X } from 'react-feather'
 
-const taskCard = (item, isFocused, onCheckClick, onFocusClick) => (
+const TaskCard = (item, isFocused, onCheckClick, onFocusClick) => (
     <Box
     display="flex"
     py={1}
@@ -60,4 +60,4 @@ const taskCard = (item, isFocused, onCheckClick, onFocusClick) => (
     </Box>
 )
 
-export default taskCard
+export default TaskCard
