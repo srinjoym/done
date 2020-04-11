@@ -10,8 +10,8 @@ let tray = null
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
-    width: 350,
-    height: 450,
+    width: 325,
+    height: 375,
     show: false,
     frame: false,
     resizable: false,

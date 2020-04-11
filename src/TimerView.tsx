@@ -1,15 +1,14 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { IconButton, Icon, Heading, Box, Text, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/core"
+import { IconButton, Heading, Box, Text, Link } from "@chakra-ui/core"
 import { Play, Pause, MoreVertical } from "react-feather"
 import * as moment from 'moment';
-
 import { startCountdown, pauseTimer, advanceSession, resetTimer } from './store/timer/actions';
 import { AppState } from "./store";
 import { Session } from './store/timer/types';
 import { getCurrentTimeString, getPaused, getCurrentSession } from './store/timer/selectors'
 
-
+import { remote } from 'electron'
 
 interface TimerViewProps {
   startCountdown: typeof startCountdown;
@@ -21,8 +20,17 @@ interface TimerViewProps {
   currentSession: Session;
 }
 
+const displayMoreMenu = (advanceSession, resetTimer) => {
+  const { Menu, MenuItem } = remote
+
+  const menu = new Menu()
+  menu.append(new MenuItem({ label: 'Skip Session', click: advanceSession }))
+  menu.append(new MenuItem({ label: 'Reset Timer', click: resetTimer }))
+  menu.popup({ window: remote.getCurrentWindow() })
+}
+
 const newTimerView: React.FC<TimerViewProps> = props => {
-  const {startCountdown, pauseTimer, currentTimeString, isPaused, advanceSession, currentSession} = props;
+  const {startCountdown, pauseTimer, currentTimeString, isPaused, advanceSession, resetTimer, currentSession} = props;
   const currentTime = moment.duration(currentTimeString)
 
   const _toggleTimer = () => isPaused ? startCountdown() : pauseTimer()
@@ -41,6 +49,8 @@ const newTimerView: React.FC<TimerViewProps> = props => {
         </Heading>
 
         <IconButton
+          variant="outline"
+          variantColor="purple"
           onClick={_toggleTimer}
           my={2}
           mx={1}
@@ -49,21 +59,17 @@ const newTimerView: React.FC<TimerViewProps> = props => {
           aria-label={isPaused? "Play":"Pause"}
         />
 
-        <Menu>
-          <Box mt={4} ml={1}>
-            <MenuButton as={MoreVertical}/>
-          </Box>
-
-          <MenuList placement="bottom">
-            <MenuItem onClick={advanceSession}>Skip Session</MenuItem>
-            <MenuItem onClick={resetTimer}>Reset session</MenuItem>
-          </MenuList>
-        </Menu>
+        <Box mt={4} mx={1}>
+          <Link>
+            <MoreVertical
+              onClick={() => displayMoreMenu(advanceSession, resetTimer)}
+              aria-label={"More Options"}
+            />
+          </Link>
+        </Box>
       </Box>
 
       <Text textAlign="center" color="grey" my={1}>{currentSession.type}</Text>
-      {/* <Button onClick={_resetTimer} m={2} variant='outline'>Reset</Button> */}
-      {/* <Button display="block" onClick={advanceSession} m={2}>Advance</Button> */}
     </Box>
   )
 }
