@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { AppState } from "../";
 import { START_TIMER, PAUSE_TIMER, RESET_TIMER, UPDATE_TIMER, ADVANCE_SESSION } from "./types";
 import { addTaskTimeSpent } from "../task/actions";
+const alarmFile = require("./Alarm01.wav")
 
 const { ipcRenderer } = require('electron')
 let timer: number | undefined
@@ -20,8 +21,9 @@ export const startCountdown = (): ThunkAction<void, AppState, null, Action<strin
         dispatch(addTaskTimeSpent(state.task.focusTaskId, moment.duration(1, 'second')))
     } else {
       clearInterval(timer)
+      dispatch(pauseTimer())
+      dispatch(advanceSession())
       triggerNotification()
-      dispatch(updateTime(moment.duration(0)))
     }
   }, 1000)
 };
@@ -63,4 +65,6 @@ export function resetTimer () {
 
 function triggerNotification() {
   ipcRenderer.send('sendNotification')
+  const audio = new Audio(alarmFile)
+  audio.play()
 }

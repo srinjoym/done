@@ -33,7 +33,7 @@ const initialState: TimerState = {
   paused: true
 };
 
-export function timerReducer(state: TimerState = initialState, action) {
+export const timerReducer = (state: TimerState = initialState, action) => {
   return produce(state, draft => {
     switch (action.type) {
       case START_TIMER:

@@ -9,7 +9,9 @@ import {
   SET_TASK_COMPLETE,
   SET_FOCUS_TASK_ID
 } from "./types";
+
 import * as moment from 'moment';
+import produce from 'immer';
 
 const initialTaskState: Task = {
   id: '_' + Math.random().toString(36).substr(2, 9),
@@ -22,66 +24,42 @@ const initialState: TaskState = {
   tasks: []
 };
 
-function taskReducer(
-  state = initialTaskState,
-  action: TaskActionTypes):Task {
+const taskReducer = (state: Task = initialTaskState, action) => {
+  return produce(state, draft => {
+    // Return early if we're not processing this task
+    if (action.meta.id !== draft.id)
+      return;
+
     switch (action.type) {
       case ADD_TASK_TIME_SPENT:
-        if (action.meta.id === state.id) {
-          return {
-            ...state,
-            timeSpent: state.timeSpent.add(action.meta.duration)
-          }
-        } else {
-          return state;
-        }
-        // falls through
+        draft.timeSpent = draft.timeSpent.add(action.meta.duration)
+        break
       case SET_TASK_COMPLETE:
-        if (action.meta.id === state.id) {
-          return {
-            ...state,
-            completed: action.meta.status
-          }
-        } else {
-          return state;
-        }
-        // falls through
-      default:
-        return state;
+        draft.completed = action.meta.status
+        break
     }
+  })
 }
 
-export function tasksReducer(
-  state = initialState,
-  action: TaskActionTypes
-): TaskState {
-  switch (action.type) {
-    case UPDATE_TASKS:
-      return {
-        ...state,
-        tasks: action.payload
-      };
-    case ADD_TASK:
-      return {
-        ...state,
-        tasks: [...state.tasks, action.payload]
-      };
-    case DELETE_TASK:
-      return {
-        ...state,
-        tasks: state.tasks.filter(
+export const tasksReducer = (state = initialState, action: TaskActionTypes) => {
+  return produce(state, draft => {
+    switch (action.type) {
+      case UPDATE_TASKS:
+        draft.tasks = action.payload
+        break
+      case ADD_TASK:
+        draft.tasks = [...draft.tasks, action.payload]
+        break
+      case DELETE_TASK:
+        draft.tasks = draft.tasks.filter(
           task => task.id !== action.meta.id
         )
-      };
-    case SET_FOCUS_TASK_ID:
-      return {
-        ...state,
-        focusTaskId: action.meta.id
-      };
-    default:
-      const tasks = state.tasks.map((task) => {
-        return taskReducer(task, action)
-      })
-      return { ...state, tasks }
-  }
+        break
+      case SET_FOCUS_TASK_ID:
+        draft.focusTaskId = action.meta.id
+        break
+      default:
+        draft.tasks = draft.tasks.map(task => taskReducer(task, action))
+    }
+  })
 }
