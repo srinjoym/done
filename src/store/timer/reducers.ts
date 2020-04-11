@@ -47,6 +47,7 @@ export const timerReducer = (state: TimerState = initialState, action) => {
         break;
       case RESET_TIMER:
         draft.currentTime = draft.sessions[draft.currentSessionID].duration;
+        draft.paused = true;
         break;
       case ADVANCE_SESSION:
         draft.currentSessionID = (draft.currentSessionID + 1)%10

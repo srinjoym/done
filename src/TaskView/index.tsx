@@ -4,11 +4,11 @@ import { connect } from "react-redux"
 import { AppState } from "../store"
 import { Input, Box } from '@chakra-ui/core'
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd"
-
 import {addTask, updateTasks, deleteTask, setTaskComplete, setFocusTaskId} from '../store/task/actions'
 import {Task} from '../store/task/types'
 import { getTasks, getFocusTaskId } from '../store/task/selectors'
-import taskCard from './taskCard'
+import TaskCard from './TaskCard'
+import Placeholder from './Placeholder'
 
 interface TaskViewProps {
   tasks: Task[];
@@ -68,7 +68,7 @@ const TaskView:React.FC<TaskViewProps> = ({tasks, focusTaskId, updateTasks, addT
     setTaskComplete(id, completed)
   }
 
-  const _taskCard = (item: Task) => taskCard(
+  const _taskCard = (item: Task) => TaskCard(
     item,
     focusTaskId === item.id,
     () => _completeTask(item.id, !item.completed),
@@ -80,6 +80,8 @@ const TaskView:React.FC<TaskViewProps> = ({tasks, focusTaskId, updateTasks, addT
   return (
     <Box display="flex" flexDirection="column" height="100%">
       <Box flexGrow={1} height="100%" max-height="100%" overflowY="scroll">
+        {focusedTask === undefined && otherTasks.length === 0 && <Placeholder />}
+
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
