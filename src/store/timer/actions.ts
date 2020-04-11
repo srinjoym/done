@@ -21,8 +21,9 @@ export const startCountdown = (): ThunkAction<void, AppState, null, Action<strin
         dispatch(addTaskTimeSpent(state.task.focusTaskId, moment.duration(1, 'second')))
     } else {
       clearInterval(timer)
+      dispatch(pauseTimer())
+      dispatch(advanceSession())
       triggerNotification()
-      dispatch(updateTime(moment.duration(0)))
     }
   }, 1000)
 };
