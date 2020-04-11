@@ -26,16 +26,14 @@ const initialState: TaskState = {
 
 const taskReducer = (state: Task = initialTaskState, action) => {
   return produce(state, draft => {
-    // Return early if we're not processing this task
-    if (action.meta.id !== draft.id)
-      return;
-
     switch (action.type) {
       case ADD_TASK_TIME_SPENT:
-        draft.timeSpent = draft.timeSpent.add(action.meta.duration)
+        if (action.meta.id === draft.id)
+          draft.timeSpent = draft.timeSpent.add(action.meta.duration)
         break
       case SET_TASK_COMPLETE:
-        draft.completed = action.meta.status
+        if (action.meta.id === draft.id)
+          draft.completed = action.meta.status
         break
     }
   })
