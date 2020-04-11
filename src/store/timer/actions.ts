@@ -15,10 +15,13 @@ export const startCountdown = (): ThunkAction<void, AppState, null, Action<strin
     const state = getState();
     const currentTime = moment.duration(state.timer.currentTime)
     if (currentTime.asMilliseconds() >= 0) {
-      dispatch(updateTime(currentTime.subtract(1, 'second')))
+      const newTime = currentTime.subtract(1, 'second')
+      dispatch(updateTime(newTime))
+      ipcRenderer.send('updateMenuIcon', moment.utc(newTime.asMilliseconds()).format("mm:ss"))
 
-      if (state.task.focusTaskId)
+      if (state.task.focusTaskId) {
         dispatch(addTaskTimeSpent(state.task.focusTaskId, moment.duration(1, 'second')))
+      }
     } else {
       clearInterval(timer)
       dispatch(pauseTimer())
@@ -29,6 +32,9 @@ export const startCountdown = (): ThunkAction<void, AppState, null, Action<strin
 };
 
 export function advanceSession () {
+  clearInterval(timer)
+  ipcRenderer.send('updateMenuIcon', "")
+
   return {
     type: ADVANCE_SESSION,
   }
@@ -49,6 +55,7 @@ export function startTimer () {
 
 export function pauseTimer () {
   clearInterval(timer)
+  ipcRenderer.send('updateMenuIcon', "")
 
   return {
     type: PAUSE_TIMER
