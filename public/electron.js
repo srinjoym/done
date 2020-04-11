@@ -78,6 +78,10 @@ app.on("ready", () => {
       showWindow()
     })
   })
+
+  ipcMain.on("updateMenuIcon", (event, text) => {
+    tray.setTitle(text)
+  })
 })
 
 app.on("window-all-closed", function () {
