@@ -2,8 +2,7 @@ import React, {useState} from 'react'
 import * as moment from 'moment'
 import { connect } from "react-redux"
 import { AppState } from "../store"
-import { Check, Plus } from 'react-feather'
-import { Input, Box, Text, IconButton } from '@chakra-ui/core'
+import { Input, Box } from '@chakra-ui/core'
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd"
 
 import {addTask, updateTasks, deleteTask, setTaskComplete, setFocusTaskId} from '../store/task/actions'
