@@ -1,6 +1,4 @@
-<img src="public/icon.png" width="100" height="100">
-
-# Done
+# Done       <img src="public/icon.png" width="35" height="35">
 
 A minimalist menubar app to track tasks with the Pomodoro technique. This project is under active development, feel free to add any feature requests.
 
